@@ -1,4 +1,5 @@
 Summary:	Extended Tcl (TclX)
+Summary(pl):	Rozszerzony Tcl (TclX)
 Name:		tclx
 %define	major	8.3
 Version:	%{major}.5
@@ -21,18 +22,20 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 TclX extension to Tcl.
 
+%description -l pl
+TclX - rozszerzenie do Tcl.
+
 %package devel
-Summary:	Tool Command Language header files and development documentation
-Summary(pl):	Pliki nag³ówkowe oraz dokumentacja dla Tcl (Tool Command Language)
+Summary:	Tool Command Language header files
+Summary(pl):	Pliki nag³ówkowe dla Tcl (Tool Command Language)
 Group:		Development/Languages/Tcl
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Tool Command Language embeddable scripting language header files and
-develpment documentation.
+Tool Command Language embeddable scripting language header files.
 
 %description devel -l pl
-Pliki nag³ówkowe oraz dokumentacja dla Tcl (Tool Command Language).
+Pliki nag³ówkowe dla Tcl (Tool Command Language).
 
 %prep
 %setup -q -n %{name}%{version}
