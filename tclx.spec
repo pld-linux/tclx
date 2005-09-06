@@ -11,6 +11,7 @@ Source0:	http://dl.sourceforge.net/tclx/%{name}%{version}-src.tar.gz
 URL:		http://tclx.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	tcl-devel >= %{major}.0
+BuildRequires:	tk-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define	_ulibdir /usr/lib
