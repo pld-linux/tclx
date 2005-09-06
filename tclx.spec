@@ -8,6 +8,7 @@ License:	BSD
 Group:		Development/Languages/Tcl
 Source0:	http://dl.sourceforge.net/tclx/%{name}%{version}-src.tar.gz
 # Source0-md5:	2cdd06d29f6dfbf31bf4ce192cf46918
+Patch0:		%{name}-skiptest.patch
 URL:		http://tclx.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	tcl-devel >= %{major}.0
@@ -40,13 +41,17 @@ Pliki nag³ówkowe dla Tcl (Tool Command Language).
 
 %prep
 %setup -q -n %{name}%{version}
+%patch0 -p1
 
 %build
 cd unix
-sed -e "s/^CFLAGS_OPTIMIZE.*/CFLAGS_OPTIMIZE=%{rpmcflags} -D__NO_STRING_INLINES -D__NO_MATH_INLINES -D_REENTRANT/" \
-	Makefile.in > Makefile.in.new
-mv -f Makefile.in.new Makefile.in
+sed -i -e "s/^CFLAGS_OPTIMIZE.*/CFLAGS_OPTIMIZE=%{rpmcflags} -D__NO_STRING_INLINES -D__NO_MATH_INLINES -D_REENTRANT/" \
+	Makefile.in
 %configure2_13 \
+	--with-tclconfig=%{_ulibdir} \
+        --with-tkconfig=%{_ulibdir} \
+        --with-tclinclude=%{_includedir} \
+        --with-tkinclude=%{_includedir} \
 	--enable-shared \
 	--enable-threads \
 	--enable-64bit \
@@ -54,9 +59,7 @@ mv -f Makefile.in.new Makefile.in
 %{__make} \
 	TCL_PACKAGE_PATH="%{_libdir} %{_libdir}/tcl%{major} %{_ulibdir} %{_ulibdir}/tcl%{major}"
 
-sed -e "s#%{_builddir}/%{name}%{version}/unix#%{_libdir}#; \
-	s#%{_builddir}/%{name}%{version}#%{_includedir}#" tclConfig.sh > tclConfig.sh.new
-mv -f tclConfig.sh.new tclConfig.sh
+sed -i -e "s#%{_builddir}/%{name}%{version}/unix#%{_libdir}#g" t*Config.sh
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -67,15 +70,16 @@ install -d $RPM_BUILD_ROOT{%{_prefix},%{_mandir}/man1}
 	TCL_PACKAGE_PATH="%{_libdir} %{_libdir}/tcl%{major} %{_ulibdir} %{_ulibdir}/tcl%{major}" \
 	MAN_INSTALL_DIR=$RPM_BUILD_ROOT%{_mandir}
 
-ln -sf libtcl%{major}.so.0.0 $RPM_BUILD_ROOT%{_libdir}/libtcl.so
-ln -sf libtcl%{major}.so.0.0 $RPM_BUILD_ROOT%{_libdir}/libtcl%{major}.so
-mv -f $RPM_BUILD_ROOT%{_bindir}/tclsh%{major} $RPM_BUILD_ROOT%{_bindir}/tclsh
+# for linking with -ltclx and -ltkx
+ln -sf libtclx%{major}.so $RPM_BUILD_ROOT%{_libdir}/libtclx.so
+ln -sf libtkx%{major}.so $RPM_BUILD_ROOT%{_libdir}/libtkx.so
+ln -sf libtclx%{major}.a $RPM_BUILD_ROOT%{_libdir}/libtclx.a
+ln -sf libtkx%{major}.a $RPM_BUILD_ROOT%{_libdir}/libtkx.a
 
-%{?have_ulibdir:mv $RPM_BUILD_ROOT%{_libdir}/tclConfig.sh $RPM_BUILD_ROOT%{_ulibdir}/tclConfig.sh}
+# rename memory.n since tcl-devel also provides it
+mv $RPM_BUILD_ROOT%{_mandir}/mann/{m,M}emory.n
 
-bzip2 -dc %{SOURCE1} | tar xf - -C $RPM_BUILD_ROOT%{_mandir}
-
-install -d $RPM_BUILD_ROOT%{_libdir}/tcl%{major}
+%{?have_ulibdir:mv $RPM_BUILD_ROOT%{_libdir}/t*Config.sh $RPM_BUILD_ROOT%{_ulibdir}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
