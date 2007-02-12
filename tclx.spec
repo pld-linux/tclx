@@ -1,5 +1,5 @@
 Summary:	Extended Tcl (TclX)
-Summary(pl.UTF-8):   Rozszerzony Tcl (TclX)
+Summary(pl.UTF-8):	Rozszerzony Tcl (TclX)
 Name:		tclx
 %define	major	8.3
 Version:	%{major}.5
@@ -29,7 +29,7 @@ TclX - rozszerzenie do Tcl.
 
 %package devel
 Summary:	Tool Command Language header files
-Summary(pl.UTF-8):   Pliki nagłówkowe dla Tcl (Tool Command Language)
+Summary(pl.UTF-8):	Pliki nagłówkowe dla Tcl (Tool Command Language)
 Group:		Development/Languages/Tcl
 Requires:	%{name} = %{version}-%{release}
 
